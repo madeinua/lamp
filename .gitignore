@@ -1,0 +1,38 @@
+# Ignore IDE/editor junk
+*.swp
+*.swo
+*.DS_Store
+.vscode/
+.idea/
+
+# Composer/node/vendor artifacts
+vendor/
+node_modules/
+**/*.Zone.Identifier
+
+# Environment/local overrides
+.env
+.env.local
+tools/scss-watcher/node_modules/
+
+# Logs and runtime files
+*.log
+*.pid
+*.gz
+*.tgz
+
+# Mailpit captured emails
+mail/
+
+# Project code: keep stack, ignore site content
+htdocs/**
+
+# Docker artifacts
+**/.docker-compose.override.yml
+
+# SSL certificates (auto-generated, contain project names)
+docker/apache/ssl/*.crt
+docker/apache/ssl/*.key
+
+# Apache vhosts configuration (contains personal/project data)
+docker/apache/vhosts/dev.conf

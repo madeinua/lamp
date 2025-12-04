@@ -1,0 +1,63 @@
+services:
+  web:
+    build:
+      context: ./docker/php-apache
+    container_name: dev-web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./htdocs:/var/www/htdocs
+      - ./docker/apache/vhosts:/etc/apache2/sites-enabled
+      - ./docker/apache/ssl:/etc/apache2/ssl
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./mail/eml:/mail/eml
+    depends_on:
+      - db
+      - mailpit
+
+  db:
+    image: mysql:8.0
+    container_name: dev-db
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf:ro
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: dev-mailpit
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    volumes:
+      - mailpit_data:/data
+      - ./mail:/mail
+    environment:
+      MP_DATA_FILE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    command:
+      - "--smtp-auth-accept-any"
+      - "--smtp-auth-allow-insecure"
+
+  scss:
+    image: node:20-alpine
+    container_name: dev-scss
+    working_dir: /opt/scss-watcher
+    volumes:
+      - ./tools/scss-watcher:/opt/scss-watcher
+      - ./htdocs:/var/www/htdocs
+    command: sh -c "npm install && npm run watch"
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  mailpit_data:
