@@ -1,0 +1,166 @@
+# Apache Virtual Hosts Configuration Template
+#
+# This is a template file. Copy or customize this file to create your own vhosts.
+# The actual 'dev.conf' file is excluded from git to protect your personal/project data.
+#
+# Instructions:
+# 1. Copy this file to 'dev.conf' (or it will be auto-created on first container start)
+# 2. Replace the example domains with your actual project domains
+# 3. Update DocumentRoot paths to match your project structure
+# 4. Customize ServerAdmin email if needed
+# 5. Add/remove virtual hosts as needed for your projects
+#
+# Pattern: Each project typically needs two VirtualHost blocks:
+#   - One for HTTP (port 80)
+#   - One for HTTPS (port 443) with SSL configuration
+
+# ============================================================================
+# LOCALHOST - Default site
+# ============================================================================
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs"
+    <Directory "/var/www/htdocs">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName localhost
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs"
+    <Directory "/var/www/htdocs">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName localhost
+    SetEnv APPLICATION_ENV "development"
+    SSLEngine on
+    SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
+    SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
+</VirtualHost>
+
+# ============================================================================
+# EXAMPLE PROJECT 1 - Simple WordPress/PHP site
+# ============================================================================
+# Replace 'project1.local' with your actual domain (e.g., mysite.local)
+# Replace '/var/www/htdocs/project1' with your actual project path
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project1"
+    <Directory "/var/www/htdocs/project1">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project1.local
+    SetEnv APPLICATION_ENV "development"
+    ErrorLog "/var/log/apache2/project1-error.log"
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project1"
+    <Directory "/var/www/htdocs/project1">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project1.local
+    SetEnv APPLICATION_ENV "development"
+    SSLEngine on
+    SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
+    SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
+    ErrorLog "/var/log/apache2/project1-error.log"
+</VirtualHost>
+
+# ============================================================================
+# EXAMPLE PROJECT 2 - Laravel application (public/ directory)
+# ============================================================================
+# For Laravel/Symfony apps, DocumentRoot points to public/ subdirectory
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project2/public"
+    <Directory "/var/www/htdocs/project2">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project2.local
+    ErrorLog "/var/log/apache2/project2-error.log"
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project2/public"
+    <Directory "/var/www/htdocs/project2">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project2.local
+    SSLEngine on
+    SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
+    SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
+</VirtualHost>
+
+# ============================================================================
+# EXAMPLE PROJECT 3 - With SimpleSAMLphp or special aliases
+# ============================================================================
+# Shows how to add custom environment variables and aliases
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project3"
+    <Directory "/var/www/htdocs/project3">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project3.local
+
+    # Example: SimpleSAMLphp configuration
+    SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/www/htdocs/project3/simplesamlphp/config
+    Alias /simplesaml /var/www/htdocs/project3/simplesamlphp/public
+    <Directory /var/www/htdocs/project3/simplesamlphp/public>
+        Require all granted
+    </Directory>
+
+    ErrorLog "/var/log/apache2/project3-error.log"
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/htdocs/project3"
+    <Directory "/var/www/htdocs/project3">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ServerName project3.local
+
+    SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/www/htdocs/project3/simplesamlphp/config
+    Alias /simplesaml /var/www/htdocs/project3/simplesamlphp/public
+    <Directory /var/www/htdocs/project3/simplesamlphp/public>
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
+    SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
+</VirtualHost>
+
+# ============================================================================
+# ADD MORE PROJECTS HERE
+# ============================================================================
+# Copy one of the examples above and customize for each additional project
+# Don't forget to:
+# 1. Update ServerName to your domain
+# 2. Update DocumentRoot to your project path
+# 3. Update ErrorLog filename
+# 4. Add the domain to your /etc/hosts file (or use update-hosts.sh script)

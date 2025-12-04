@@ -1,0 +1,11 @@
+{
+  "name": "scss-watcher",
+  "private": true,
+  "scripts": {
+    "watch": "sass --watch /var/www/htdocs:/var/www/htdocs --load-path /var/www/htdocs --style=expanded --embed-source-map",
+    "build": "sass /var/www/htdocs:/var/www/htdocs --load-path /var/www/htdocs --style=compressed --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.80.0"
+  }
+}
