@@ -301,8 +301,15 @@ The test runs **50+ checks** and shows detailed pass/fail results.
 WordPress needs write access to install plugins, update themes, etc. Use these scripts:
 
 ```bash
-./fix-permissions.sh    # Fix permissions for WordPress (before plugin updates)
-./dev-permissions.sh    # Restore permissions for editing files from host
+./fix-permissions.sh [path]    # Fix permissions for WordPress (before plugin updates)
+./dev-permissions.sh [path]    # Restore permissions for editing files from host
+```
+
+**Examples:**
+```bash
+./fix-permissions.sh htdocs/myproject/wp-content    # Fix specific project
+./fix-permissions.sh htdocs                         # Fix entire htdocs
+./dev-permissions.sh htdocs/myproject/wp-content    # Restore for editing
 ```
 
 **When to use:**
@@ -438,7 +445,7 @@ This is normal for self-signed certificates. You can:
 
 **WordPress can't write files / asks for FTP:**
 ```bash
-./fix-permissions.sh    # Fix WordPress write permissions
+./fix-permissions.sh htdocs/project-name/wp-content    # Fix WordPress write permissions
 ```
 
 Then add to wp-config.php:
@@ -448,7 +455,7 @@ define('FS_METHOD', 'direct');  // Force direct filesystem access
 
 **Can't edit files from Windows/IDE:**
 ```bash
-./dev-permissions.sh    # Restore host user ownership
+./dev-permissions.sh htdocs/project-name/wp-content    # Restore host user ownership
 ```
 
 **General permission errors:**

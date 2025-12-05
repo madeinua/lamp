@@ -110,52 +110,6 @@
 </VirtualHost>
 
 # ============================================================================
-# EXAMPLE PROJECT 3 - With SimpleSAMLphp or special aliases
-# ============================================================================
-# Shows how to add custom environment variables and aliases
-
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot "/var/www/htdocs/project3"
-    <Directory "/var/www/htdocs/project3">
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-    ServerName project3.local
-
-    # Example: SimpleSAMLphp configuration
-    SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/www/htdocs/project3/simplesamlphp/config
-    Alias /simplesaml /var/www/htdocs/project3/simplesamlphp/public
-    <Directory /var/www/htdocs/project3/simplesamlphp/public>
-        Require all granted
-    </Directory>
-
-    ErrorLog "/var/log/apache2/project3-error.log"
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerAdmin webmaster@localhost
-    DocumentRoot "/var/www/htdocs/project3"
-    <Directory "/var/www/htdocs/project3">
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-    ServerName project3.local
-
-    SetEnv SIMPLESAMLPHP_CONFIG_DIR /var/www/htdocs/project3/simplesamlphp/config
-    Alias /simplesaml /var/www/htdocs/project3/simplesamlphp/public
-    <Directory /var/www/htdocs/project3/simplesamlphp/public>
-        Require all granted
-    </Directory>
-
-    SSLEngine on
-    SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
-    SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
-</VirtualHost>
-
-# ============================================================================
 # ADD MORE PROJECTS HERE
 # ============================================================================
 # Copy one of the examples above and customize for each additional project
