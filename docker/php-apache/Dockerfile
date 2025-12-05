@@ -30,9 +30,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     bcmath \
     opcache
 
-# Install Xdebug for debugging
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+# Install Xdebug and Redis
+RUN pecl install xdebug redis \
+    && docker-php-ext-enable xdebug redis
 
 # Enable Apache modules
 RUN a2enmod rewrite ssl headers
