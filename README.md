@@ -201,8 +201,8 @@ lamp/
 │       └── my.cnf                  # MySQL configuration (from XAMPP)
 ├── htdocs/                         # Your web files (document root)
 │   ├── index.php
-│   ├── loyalty/
-│   ├── laravel/
+│   ├── project1/
+│   ├── project2/
 │   └── ...
 ├── mail/                           # Mailpit storage
 │   └── eml/                        # .eml files
