@@ -17,6 +17,7 @@ A complete Docker-based LAMP (Linux, Apache, MySQL, PHP) development environment
 |---------|------|-------------|
 | Apache/PHP | 80, 443 | Web server with PHP 8.3 |
 | MySQL | 3306 | Database server |
+| Redis | 6379 | In-memory data store and cache |
 | Mailpit Web UI | 8025 | Email testing interface |
 | Mailpit SMTP | 1025 | SMTP server for catching emails |
 
@@ -122,6 +123,33 @@ $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
 - UTF-8 MB4 character set (supports emojis and special characters)
 - InnoDB buffer pool: 256MB (adjustable based on your needs)
 - Buffer sizes and timeouts optimized for development
+
+## Redis Configuration
+
+**Redis Connection:**
+- Host: `localhost` or `redis` (from within containers)
+- Port: `6379`
+- No password required (development environment)
+- Persistent storage enabled (AOF)
+
+**Connect from PHP:**
+```php
+$redis = new Redis();
+$redis->connect('redis', 6379);  // Use 'redis' as hostname (Docker service name)
+
+// Example usage
+$redis->set('key', 'value');
+$value = $redis->get('key');
+```
+
+**Connect from external tools:**
+- Use `localhost:6379` from Windows
+- Use any Redis GUI client (RedisInsight, Redis Commander, etc.)
+
+**Redis CLI access:**
+```bash
+docker exec -it dev-redis redis-cli
+```
 
 ## Email Testing
 
@@ -284,10 +312,20 @@ docker exec dev-db mysqldump -u root -proot app > backup.sql  # Backup
 docker exec -i dev-db mysql -u root -proot app < backup.sql   # Restore
 ```
 
+### Redis Management
+```bash
+docker exec -it dev-redis redis-cli              # Redis CLI
+docker exec -it dev-redis redis-cli PING         # Test connection
+docker exec -it dev-redis redis-cli KEYS '*'     # List all keys
+docker exec -it dev-redis redis-cli FLUSHALL     # Clear all data
+docker exec -it dev-redis redis-cli INFO         # Server info
+```
+
 ### Access Container Shell
 ```bash
 docker exec -it dev-web bash        # Apache/PHP container
 docker exec -it dev-db bash         # MySQL container
+docker exec -it dev-redis sh        # Redis container (Alpine Linux)
 ```
 
 ### Restart After Changes
@@ -409,6 +447,7 @@ docker-compose restart
 ## PHP Extensions Installed
 
 - mysqli, pdo_mysql
+- redis (Redis client)
 - gd (image processing)
 - zip
 - intl (internationalization)
@@ -418,6 +457,7 @@ docker-compose restart
 - exif
 - bcmath
 - opcache
+- xdebug (debugging)
 
 **To add more extensions:**
 1. Edit `docker/php-apache/Dockerfile`
