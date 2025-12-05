@@ -2,6 +2,9 @@ services:
   web:
     build:
       context: ./docker/php-apache
+      args:
+        HOST_UID: ${HOST_UID:-1000}
+        HOST_GID: ${HOST_GID:-1000}
     container_name: dev-web
     ports:
       - "80:80"

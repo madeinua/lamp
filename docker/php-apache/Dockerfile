@@ -75,6 +75,13 @@ RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.
     && echo "xdebug.log=/tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
+# Run Apache as host user (no permission issues for local dev)
+# This gets the host user UID/GID and changes www-data to match
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+RUN usermod -u ${HOST_UID} www-data && \
+    groupmod -g ${HOST_GID} www-data
+
 WORKDIR /var/www/htdocs
 
 # Use entrypoint script (auto-generates SSL certs on first run)
