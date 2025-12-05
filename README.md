@@ -6,6 +6,7 @@ A complete Docker-based LAMP (Linux, Apache, MySQL, PHP) development environment
 
 - **PHP 8.3** with Apache
 - **MySQL 8.0** database
+- **Redis 7** - In-memory data store for caching and sessions
 - **Multiple Virtual Hosts** - Run multiple projects simultaneously
 - **SSL/HTTPS Support** - Self-signed certificates for all domains
 - **Email Catching** - Mailpit captures all outgoing emails
@@ -296,6 +297,18 @@ The test runs **50+ checks** and shows detailed pass/fail results.
 ./test-stack.sh     # Run full test suite
 ```
 
+### File Permissions (WordPress)
+WordPress needs write access to install plugins, update themes, etc. Use these scripts:
+
+```bash
+./fix-permissions.sh    # Fix permissions for WordPress (before plugin updates)
+./dev-permissions.sh    # Restore permissions for editing files from host
+```
+
+**When to use:**
+- Run `./fix-permissions.sh` before installing/updating plugins or themes in WordPress admin
+- Run `./dev-permissions.sh` when you need to edit files from your IDE/editor on Windows/WSL
+
 ### View Logs
 ```bash
 docker-compose logs -f              # All services
@@ -422,7 +435,23 @@ This is normal for self-signed certificates. You can:
 4. Refresh Mailpit web interface
 
 ### Permission Issues
-If you get permission errors accessing files:
+
+**WordPress can't write files / asks for FTP:**
+```bash
+./fix-permissions.sh    # Fix WordPress write permissions
+```
+
+Then add to wp-config.php:
+```php
+define('FS_METHOD', 'direct');  // Force direct filesystem access
+```
+
+**Can't edit files from Windows/IDE:**
+```bash
+./dev-permissions.sh    # Restore host user ownership
+```
+
+**General permission errors:**
 ```bash
 # From WSL
 chmod -R 755 htdocs/
@@ -431,6 +460,12 @@ chown -R $USER:$USER htdocs/
 # Check Docker has access
 ls -la htdocs/
 ```
+
+**Why this happens:**
+- WordPress runs as `www-data` (UID 33) inside the container
+- Your host files are owned by your user (UID 1000)
+- Docker bind mounts preserve UID/GID, causing permission mismatches
+- The scripts switch ownership between www-data (for WordPress) and host user (for editing)
 
 ### Line Ending Issues (CRLF vs LF)
 If Apache fails to start with syntax errors:
