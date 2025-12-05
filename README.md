@@ -10,7 +10,6 @@ A complete Docker-based LAMP (Linux, Apache, MySQL, PHP) development environment
 - **Multiple Virtual Hosts** - Run multiple projects simultaneously
 - **SSL/HTTPS Support** - Self-signed certificates for all domains
 - **Email Catching** - Mailpit captures all outgoing emails
-- **XAMPP-Compatible Configuration** - Uses your existing php.ini settings
 
 ## Stack Components
 
@@ -297,24 +296,15 @@ The test runs **50+ checks** and shows detailed pass/fail results.
 ./test-stack.sh     # Run full test suite
 ```
 
-### File Permissions (WordPress)
-WordPress needs write access to install plugins, update themes, etc. Use these scripts:
+### File Permissions
 
-```bash
-./fix-permissions.sh [path]    # Fix permissions for WordPress (before plugin updates)
-./dev-permissions.sh [path]    # Restore permissions for editing files from host
-```
+**No permission management needed!** Apache runs as your host user (UID 1000), which means:
+- WordPress can write files directly (plugin updates, uploads, etc.)
+- You can edit files from your IDE without permission conflicts
+- Git operations work seamlessly
+- No switching between www-data and host user ownership
 
-**Examples:**
-```bash
-./fix-permissions.sh htdocs/myproject/wp-content    # Fix specific project
-./fix-permissions.sh htdocs                         # Fix entire htdocs
-./dev-permissions.sh htdocs/myproject/wp-content    # Restore for editing
-```
-
-**When to use:**
-- Run `./fix-permissions.sh` before installing/updating plugins or themes in WordPress admin
-- Run `./dev-permissions.sh` when you need to edit files from your IDE/editor on Windows/WSL
+This works just like XAMPP on Windows - files are accessible by both the web server and your editor without any special configuration.
 
 ### View Logs
 ```bash
@@ -443,36 +433,28 @@ This is normal for self-signed certificates. You can:
 
 ### Permission Issues
 
-**WordPress can't write files / asks for FTP:**
-```bash
-./fix-permissions.sh htdocs/project-name/wp-content    # Fix WordPress write permissions
-```
+**This setup runs Apache as your host user (UID 1000)**, eliminating most permission issues.
 
-Then add to wp-config.php:
+**If WordPress asks for FTP credentials:**
+
+Add to `wp-config.php`:
 ```php
 define('FS_METHOD', 'direct');  // Force direct filesystem access
 ```
 
-**Can't edit files from Windows/IDE:**
+**If files show as owned by UID 33 after rebuild:**
+
+This can happen if you rebuild the container. Fix with:
 ```bash
-./dev-permissions.sh htdocs/project-name/wp-content    # Restore host user ownership
+# Change ownership from old UID 33 to new UID 1000
+docker exec dev-web find /var/www/htdocs -uid 33 -not -path "*/.git/*" -exec chown 1000:1000 {} +
 ```
 
-**General permission errors:**
-```bash
-# From WSL
-chmod -R 755 htdocs/
-chown -R $USER:$USER htdocs/
-
-# Check Docker has access
-ls -la htdocs/
-```
-
-**Why this happens:**
-- WordPress runs as `www-data` (UID 33) inside the container
-- Your host files are owned by your user (UID 1000)
-- Docker bind mounts preserve UID/GID, causing permission mismatches
-- The scripts switch ownership between www-data (for WordPress) and host user (for editing)
+**How it works:**
+- Apache runs as `www-data` with UID 1000 (matching your host user)
+- Your host user also has UID 1000
+- Both identities share the same UID = no permission conflicts
+- Files can be edited from host and written by WordPress without switching ownership
 
 ### Line Ending Issues (CRLF vs LF)
 If Apache fails to start with syntax errors:
@@ -516,6 +498,7 @@ docker-compose restart
 | Document Root | C:\xampp\htdocs | ./htdocs |
 | MySQL Host (in PHP) | localhost | db |
 | Email Testing | Mercury/Sendmail | Mailpit (http://localhost:8025) |
+| File Permissions | No issues | No issues (Apache runs as host user) |
 
 ## Performance Tips
 
