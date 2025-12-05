@@ -1,6 +1,5 @@
 #!/bin/bash
 # Email wrapper script - saves .eml files AND sends to Mailpit
-# Based on XAMPP sendmail behavior
 
 # Directory for .eml files (inside container)
 EML_DIR="/mail/eml"
