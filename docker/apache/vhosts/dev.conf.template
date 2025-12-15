@@ -86,7 +86,7 @@
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/htdocs/project2/public"
-    <Directory "/var/www/htdocs/project2">
+    <Directory "/var/www/htdocs/project2/public">
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
@@ -98,7 +98,7 @@
 <VirtualHost *:443>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/htdocs/project2/public"
-    <Directory "/var/www/htdocs/project2">
+    <Directory "/var/www/htdocs/project2/public">
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
@@ -107,6 +107,7 @@
     SSLEngine on
     SSLCertificateFile "/etc/apache2/ssl/local-dev.crt"
     SSLCertificateKeyFile "/etc/apache2/ssl/local-dev.key"
+    ErrorLog "/var/log/apache2/project2-error.log"
 </VirtualHost>
 
 # ============================================================================
