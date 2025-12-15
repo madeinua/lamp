@@ -13,7 +13,7 @@ services:
       - ./htdocs:/var/www/htdocs
       - ./docker/apache/vhosts:/etc/apache2/sites-enabled
       - ./docker/apache/ssl:/etc/apache2/ssl
-      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
       - ./mail/eml:/mail/eml
     depends_on:
       - db

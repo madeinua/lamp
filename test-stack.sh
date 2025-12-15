@@ -346,7 +346,7 @@ else
     test_result 1 "PHP memory_limit is 512M (from config)" "Got: $PHP_MEMORY"
 fi
 
-PHP_MAX_EXEC=$(docker exec dev-web php -r "echo ini_get('max_execution_time');" 2>/dev/null)
+PHP_MAX_EXEC=$(curl -s http://localhost/ 2>/dev/null | grep -o "max_execution_time[^<]*<td>[^<]*" | grep -o "[0-9]*s" | grep -o "[0-9]*")
 if [ "$PHP_MAX_EXEC" = "3600" ]; then
     test_result 0 "PHP max_execution_time is 3600s (from config)"
 else
